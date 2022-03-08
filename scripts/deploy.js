@@ -40,13 +40,9 @@ async function main() {
 
   if (network.name === "testnet" || network.name === "mainnet") {
     console.log('-------Deploying-----------')
-    const Swap = await ethers.getContractFactory("ArcadeSwap");    
-    const swapImplementation = await Swap.deploy(
-      addresses[network.name].arcadedoge,
-      addresses[network.name].factory,
-      addresses[network.name].wbnb,
-      addresses[network.name].busd,
-    )
+    const Swap = await ethers.getContractFactory("ArcadeNFT");    
+    const swapImplementation = await Swap.deploy()
+
     await swapImplementation.deployed();
     console.log("Deployed Address: " + swapImplementation.address);
 
