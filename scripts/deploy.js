@@ -38,24 +38,54 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Network:", network.name);
 
+  await deployNFT();
+  await deployExchange();
+}
+
+async function deployNFT() {
+  console.log('-------------------------');
+  console.log('Deploying StoneMusic NFT...');
   if (network.name === "testnet" || network.name === "mainnet") {
     console.log('-------Deploying-----------')
-    const Swap = await ethers.getContractFactory("ArcadeNFT");    
-    const swapImplementation = await Swap.deploy()
+    const nft = await ethers.getContractFactory("StoneMusicNFT");    
+    const nftImplementation = await nft.deploy()
 
-    await swapImplementation.deployed();
-    console.log("Deployed Address: " + swapImplementation.address);
+    await nftImplementation.deployed();
+    console.log("Deployed Address: " + nftImplementation.address);
 
     console.log('-------Verifying-----------');
     try {
       await run("verify:verify", {
-        address: swapImplementation.address,
-        constructorArguments: [
-          addresses[network.name].arcadedoge,
-          addresses[network.name].factory,
-          addresses[network.name].wbnb,
-          addresses[network.name].busd
-        ]
+        address: nftImplementation.address,
+        constructorArguments: []
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.log("Contract source code already verified");
+      } else {
+        console.error(error);
+      }
+    }
+    console.log('-------Verified-----------');
+  }
+}
+
+async function deployExchange() {
+  console.log('-------------------------');
+  console.log('Deploying Exchange...');
+  if (network.name === "testnet" || network.name === "mainnet") {
+    console.log('-------Deploying-----------')
+    const exchange = await ethers.getContractFactory("ExchangeV1");    
+    const exchangeImplementation = await exchange.deploy()
+
+    await exchangeImplementation.deployed();
+    console.log("Deployed Address: " + exchangeImplementation.address);
+
+    console.log('-------Verifying-----------');
+    try {
+      await run("verify:verify", {
+        address: exchangeImplementation.address,
+        constructorArguments: []
       });
     } catch (error) {
       if (error instanceof NomicLabsHardhatPluginError) {
